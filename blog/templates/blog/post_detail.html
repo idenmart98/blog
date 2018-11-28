@@ -1,0 +1,20 @@
+{% extends 'blog/base_blog.html' %}
+
+{% block title %}
+	{{ post.title }} - {{ block.super }}
+{% endblock %}
+
+
+{% block content %}
+	<h1 class="mt-5">
+		{{ post.title }}
+	</h1>
+	<p>
+		{{ post.body }}
+	</p>
+{% endblock %}
+
+{% block admin-panel %}
+<a href="{{post.get_update_url}}" class="btn btn-light" >Edit</a>
+<a href="{{post.get_delete_url}}" class="btn btn-danger" >Delete</a>
+{% endblock %}

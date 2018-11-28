@@ -1,0 +1,18 @@
+{% extends 'blog/base_blog.html' %}
+{% load pagination_tags %}
+
+
+{% block title %}
+	post list
+{% endblock %}
+
+
+{% block content %}
+	<h1 class='mb-5'> Posts :</h1>
+	{% autopaginate posts.qs 2 as object_list %}
+	{% for post in object_list %}
+	     {% include 'blog/includes/post_card_template.html'%}
+		
+    {% endfor %}
+    {% paginate %}
+{% endblock %}

@@ -16,11 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 #from .views import hello
-from blogin.views import *
+from .views import *
 
 
 urlpatterns = [
 	path('',redirect_blog),
 	path('admin/', admin.site.urls),
-	path('blog/',include('blog.urls'))
+	path('blog/',include('blog.urls')),
+    path('register/', RegisterFormView.as_view(),name = 'register_url'),
+    path('login/',LoginFormView.as_view(),name='login_url'),
+    path('logout',LogoutView.as_view(),name='logout_url')
 ]

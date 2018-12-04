@@ -1,0 +1,33 @@
+
+
+
+{% extends "base.html" %}
+
+{% block title %}
+  Register  {{block.suber}}
+{% endblock%}
+
+{% block content %}
+
+ 
+
+
+  <form action='' method='post'>
+    <input type="hidden" name="csrfmiddlewaretoken" value="lDWna04TcRvoAAiENWVgN6yFhcWE6ZgrieH4WoSjIbyw97JSNNesoPtUZW2XqJaN">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_username">Login:</label>
+      <input type="text" class="form-control" name="username" maxlength="150" value="" autofocus=""  required="" id="id_username">
+      <span class="helptext">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</span><br>
+      <label for="id_password1">Password:</label>
+      <input type="password" class="form-control" name="password1" required="" value="" id="id_password1">             <span class="helptext"><ul><li>Your password can't be too similar to your other personal information.</li><li>Your password must contain at least 8 characters.</li><li>Your password can't be a commonly used password.</li><li>Your password can't be entirely numeric.</li></ul></span></p><br>
+      <label for="id_password2">Password confirmation:</label>
+      <input type="password" class="form-control" name="password2" value="" required="" id="id_password2">
+      <span class="helptext">Enter the same password as before, for verification.</span><br>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Login</button>  
+    <input type="hidden" name="next" value="{{ next|escape }}" />
+  </form>
+
+{% endblock %}

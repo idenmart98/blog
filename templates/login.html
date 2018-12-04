@@ -1,0 +1,30 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+  Login  {{block.suber}}
+{% endblock%}
+
+{% block content %}
+
+  {% if form.errors %}
+    <p class="error">Сожалеем, вы неправильно ввели логин или пароль</p>
+  {% endif %}
+
+  <form action='' method='post'>
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="username">Логин:</label>
+      <input type="text" class="form-control" name="username" value="" id="username"><br>
+      <label for="password">Пароль:</label>
+      <input type="password" class="form-control" name="password" value="" id="password"><br>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Login</button>  
+    <input type="hidden" name="next" value="{{ next|escape }}" />
+  </form>
+
+{% endblock %}
+
+
+

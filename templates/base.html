@@ -18,26 +18,39 @@
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-light"style="background-color: #e3f2fd;">
-  		<a class="navbar-brand" href="#">Navbar</a>
+		{% if not user.is_authenticated%}
+  			<a class="navbar-brand" href="{% url 'register_url'%}">To Register</a>
+  		{% endif%}
   		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
     		<span class="navbar-toggler-icon"></span>
  		 </button>
 
  		 <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
     		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+    			{% if not user.is_authenticated%}
       			<li class="nav-item active">
-        			<a class="nav-link" href="{% url 'post_list_url' %}">Posts</a>
-      			</li>
-      			<li class="nav-item">
-        			<a class="nav-link" href=" {% url 'tags_list_url'%}">Tags</a>
-      			</li>
+      				<a class="navbar-brand" href="{% url 'login_url'%}">Login</a>
+      				</li>
+      			{% endif%}
+      				{% if user.is_authenticated %}
+      					<li>
+      						<a class="navbar-brand"href="{% url 'logout_url'%}">Logout</a>
+      					</li>
+      				{% endif%}
+
+      				 <li class="nav-item">
+      				
+        			<a class="navbar-brand" href="{% url 'tags_list_url'%}">Tags</a></li>
+      			
+      		
      			 <li class="nav-item">
-        			<a class="nav-link disabled" href="#">Disabled</a>
+     			 	<a class="navbar-brand" href="{% url 'post_list_url' %}">Posts</a>
+        			
       			</li>
     			</ul>
     					<form action="{% url 'post_list_url' %}" method="get" class="form-inline my-2 my-lg-0">
         						<input  class="form-control mr-sm-2" type="search" name="search" />
-        						<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        						<button class="btn btn-outline-success " type="submit">Search</button>
    						</form>
 		</div>
 	</nav>
@@ -53,16 +66,15 @@
 		</div>
 	</div>
 
-	{% if request.user.is_authenticated and request.user.is_staff %}
-		<div class="admin-panel aling-items-center">
-			<a href="/admin" class="btn btn-outline-info">Admin</a>
-			{% block admin-panel %}{% endblock %}
+	{% if user.is_authenticated %}
+		<div class="admin-panel" >
+			<div class="admin-panel aling-items-center">
+				{% if request.user.is_superuser %}
+				<a href="/admin" class="btn btn-outline-info">Admin</a>
+				{% endif%}
+				{% block admin-panel %}{% endblock %}
+			</div>
 		</div>
-
 	{% endif%}
-	             
-
-
-
 </body>
 </html>

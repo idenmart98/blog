@@ -75,15 +75,5 @@ class TagDelete(LoginRequiredMixin,DeleteView):
 	success_url = reverse_lazy('tags_list_url')
 	raise_exception = True
 
-# class PostSearch(ListView):
-# 	model = Post
-#     context_object_name = 'posts'
-#     template_name = 'blog/post_detail.html'
-#     posts = []
 
-#     def get_queryset(self):
-#          if len(self.args) > 0:
-#                return Post.objects.filter(name__icontains=self.args[0])
-#          else:
-#                return Post.objects.filter()
 

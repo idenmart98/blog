@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'blogin.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'blog',
+        'NAME': 'blogin',
         'USER': 'iden07',
         'PASSWORD': 'kulubaev07',
         'HOST': 'localhost',

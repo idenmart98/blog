@@ -5,6 +5,7 @@ from blog.utils import ObjectDetailMixin
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from blog.filters import *
+from blog.forms import *
 
 
 
@@ -22,7 +23,7 @@ class PostDetail(ObjectDetailMixin):
 
 class TagCreate(LoginRequiredMixin,CreateView):
 	model = Tag
-	fields = ['title',]
+	form_class = TagCreateForm
 	template_name = 'blog/tag_create.html'
 	raise_exception = True
 
@@ -47,9 +48,15 @@ class TagList(ListView):
 
 class PostCreate(LoginRequiredMixin,CreateView):
 	model = Post
-	fields = ['title','body','tags']
+	
 	template_name = 'blog/post_create.html'
 	raise_exception = True
+	form_class = PostCreateForm
+	
+	def form_valid(self, form):
+		form.instance.author = self.request.user
+		return super(PostCreate, self).form_valid(form) 
+
 
 class TagUpdate(LoginRequiredMixin,UpdateView):
 	model = Tag

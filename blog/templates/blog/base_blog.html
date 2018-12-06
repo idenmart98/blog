@@ -7,7 +7,9 @@
     	Create
   		</button>
   		<div class="dropdown-menu">
-    		<a class="dropdown-item" href="{% url 'tag_create_url'%}">Tag</a>
+  			{% if request.user.is_superuser %}
+    		  <a class="dropdown-item" href="{% url 'tag_create_url'%}">Tag</a>
+    		{% endif%}
     		<a class="dropdown-item" href="{% url 'post_create_url'%}">Post</a>
    
   		</div>

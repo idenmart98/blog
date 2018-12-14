@@ -1,17 +1,18 @@
 
 		<div class="card mb-5">
-  			<div class="card-header">
-   				{{ post.date_pub}}
- 			 </div>
+        <div class="card-header">
+          {{ post.date_pub}}
+        </div>
   			<div class="card-body">
-   				 <h5 class="card-title">{{ post.title }}</h5>
+   				 <h5 class="card-title"><em><strong>{{ post.title }}</strong></em></h5>
     			<p class="card-text">{{ post.body|truncatewords:15 }}</p>
-    			<a href="{{ post.get_absolute_url}}" class="btn btn-light">Read</a>
+    			<a href="{{ post.get_absolute_url}}" class="btn btn-outline-info">Read</a>
   			</div>
+
          <div class="card-footer text-muted">
-            tags:
+            Tags<br>
             {% for tag in post.tags.all %}
-              <a href="{{ tag.get_absolute_url}}">{{tag.title}}</a>
+              <a class="alert-link" href="{{ tag.get_absolute_url}}">{{tag.title}}</a>
             {% endfor %}   
         </div>
 		</div>

@@ -6,29 +6,47 @@
 
 
 {% block content %}
-<div class="card" style="width: >
-	 <img class="card-img-top" src=".../100px180/" alt="Card image cap"> 
+<div class="card" style="width": >
+	{# <img class="card-img-top" src=".../100px180/" alt="Card image cap">  #}
 	<div class="card-body">
 		<h4 class="card-title">{{ post.title }}</h4>
-		<p class="card-text">{{ post.body }}</p>	
-		<h5 class="card-title">{{ post.author }}</h5>
+		<p class="card-text">{{ post.body }}</p>
+			
+			<h5 class="badge badge-light">Author:{{ post.author }}</h5> </br>
+
+		<button>
+		<a href="{{post.get_addlike_url}}?like=like" class= "badge badge-primary" type="button" >Like</a>
+		<span class="badge badge-light">{{like}}</span>
+		</button>
+		<button>
+		<a href="{{post.get_addlike_url}}?like=dislike" class= "badge badge-primary" type="button" >Dislike</a>
+		<span class="badge badge-light">{{dislike}}</span>
+		</button>
+		<button>
+			<a href="{{post.get_coment_url}}" class= "badge badge-primary" type="button" >Comment</a>
+		</button>
 	</div>
-</div>
+</div><br>
+
+	{% for coment in coments%}
+	  <div class="card mb-5" style="width: 18rem;">
+  		<div class="card-body">
+  			
+    		<h6 class="card-text">{{coment.content}}</h6><br>
+   			
+   	  		<p class="card-subtitle mb-2 ">{{coment.pub_date}}</p>
+   	  		<p class="card-subtitle mb-2 text-muted">{{coment.author_id}}</p>
+  		</div>
+  	  </div>
+  	{% endfor %}
+
+
 {% endblock %}
 
 {% block admin-panel %}
-  {% if request.user == post.author %}
+  {% if request.user == post.author or request.user.is_superuser %}
 	<a href="{{post.get_update_url}}" class="btn btn-light" >Edit</a>
 	<a href="{{post.get_delete_url}}" class="btn btn-danger" >Delete</a>
   {% endif %}
 {% endblock %}
 
-<!-- <div class="card" style="width: 18rem;">
-  <img class="card-img-top" src=".../100px180/" alt="Card image cap">
-  <div class="card-body">
-    <h5 class="card-title">Card title</h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
-  </div>
-</div>
- -->

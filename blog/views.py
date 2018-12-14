@@ -1,86 +1,158 @@
 from django.shortcuts import render,get_object_or_404,redirect,reverse
 from django.views.generic import View,ListView,CreateView,UpdateView,DeleteView
-from blog.models import Post,Tag
+from blog.models import Post,Tag,Coment,Likes
 from blog.utils import ObjectDetailMixin
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from blog.filters import *
 from blog.forms import *
+from django.db.models import Q
 
 
+def add_likes(request, slug):
 
-
-
-
-
-class TagDetail(ObjectDetailMixin):
-	template_name = 'blog/tag_detail.html'
-	model=Tag
+	post = get_object_or_404(Post,slug=slug)
 	
-class PostDetail(ObjectDetailMixin):
-	template_name = 'blog/post_detail.html'
-	model = Post
+	if request.user.is_authenticated :
+		if not Likes.objects.filter(post_id = post ,liker = request.user):
+			if request.GET:
+				like = request.GET.get('like') == 'like'
+				Likes.objects.create(post_id=post, likes=like, liker=request.user)
+			return redirect(reverse('post_detail_url', kwargs={'slug': slug}))
+		else:
+			return redirect(reverse('post_detail_url', kwargs={'slug': slug}))
+	else:
+		return render(request, 'blog/iden.html' )
 
-class TagCreate(LoginRequiredMixin,CreateView):
-	model = Tag
-	form_class = TagCreateForm
-	template_name = 'blog/tag_create.html'
-	raise_exception = True
+
+def post_detail(request, slug):
+
+	post = get_object_or_404(Post, slug=slug)
+	coments =Coment.objects.filter(post_id=post)
+	like = Likes.objects.filter(likes=True, post_id=post).count()
+	dislike = Likes.objects.filter(likes=False, post_id=post).count()
+	return render(request, 'blog/post_detail.html', {'post': post, 'like': like, 'dislike': dislike ,'coments':coments})
+
+def tag_detail(request, slug):
+	tag = get_object_or_404(Tag, slug=slug)
+	return render(request, 'blog/tag_detail.html',{'tag':tag})
+
+def tag_create(request):
+
+	if request.method == 'GET':
+		form = TagForm()
+		return render(request, 'blog/tag_create.html', {'form':form})
+
+	if request.method == 'POST':
+
+		bound_form = TagForm(request.POST)
+		if bound_form.is_valid():
+			new_tag = bound_form.save()
+			return redirect(new_tag)
+		return render(request, 'blog/tags_list.html')
+
+def post_create(request):
+	if request.method == 'GET':
+		form = PostForm()
+		return render(request, 'blog/post_create.html', {'form': form})
+
+	if request.method == 'POST':
+		bound_form = PostForm(request.POST)
+		if bound_form.is_valid():
+		
+			bound_form.instance.author = request.user
+			new_post = bound_form.save()
+			return redirect(new_post)
+		return render(request, 'blog/post_list.html')
 
 
-class PostList(ListView):
-	model = Post
-	template_name = 'blog/index.html'
 
-	def get_context_data(self, **kwargs):
-		context = super().get_context_data(**kwargs)
-		context['posts'] = PostFilter(self.request.GET, queryset=Post.objects.all())
-		return context
+def post_list(request):
+	search_query = request.GET.get('search','')
+	if search_query:
+		posts = Post.activ.filter(Q(title__icontains=search_query)|Q(body__icontains=search_query), ) 
+		return render(request, 'blog/index.html', {'posts':posts})
+	else:
+		posts = Post.activ.all()
+		return render(request, 'blog/index.html', {'posts':posts})
+
+
+
+def tag_list(request):
+	tags = Tag.objects.all()
+	return render(request, 'blog/tags_list.html', {'tags':tags})
+
+ 
+def tag_update(request, slug):
+	if request.method == 'GET':
+		tag = Tag.objects.get(slug__iexact=slug)
+		bound_form = TagForm(instance=tag)
+		return render(request, 'blog/tag_update.html', {'form':bound_form, 'tag':tag})
+
+	if request.method == 'POST':
+		tag = Tag.objects.get(slug__iexact=slug)
+		bound_form = TagForm(request.POST, instance=tag)
+
+		if bound_form.is_valid():
+			new_tag = bound_form.save()
+			return redirect(new_tag)
+		return render(request.POST, 'blog/tag_update.html', {'form':bound_form,'tag':tag})
+
+
+
+
+def post_update(request,slug):
+	if request.method == 'GET':
+		post = Post.activ.get(slug__iexact=slug)
+		bound_form = PostForm(instance=post)
+		return render(request, 'blog/post_update.html', {'form':bound_form, 'post':post})
+
+	if request.method =='POST':
+		post = Post.activ.get(slug__iexact=slug)
+		bound_form = PostForm(request.POST, instance=post)
+
+		if bound_form.is_valid():
+			new_post = bound_form.save()
+			return redirect(new_post)
+		return render(request.POST, 'blog/post_update.html', {'form':bound_form, 'post':post})
+
+
+
+def post_delete(request,slug):
+	if request.method == 'GET':
+		post = Post.activ.get(slug__iexact=slug)
+		return render(request, 'blog/post_delete.html', {'post':post})
+
+	if request.method == 'POST':
+		post = Post.objects.get(slug__iexact=slug)
+		post.delete()
+		return redirect(reverse('post_list_url'))
+
+
+
+def tag_delete(request, slug):
+	if request.method == 'GET':
+		tag = Tag.objects.get(slug__iexact=slug)
+		return render(request, 'blog/tag_delete.html', {'tag':tag})
+
+	if request.method == 'POST':
+		tag = Tag.objects.get(slug__iexact=slug)
+		tag.delete()
+		return redirect(reverse('tags_list_url'))
 
 
 	
-
-class TagList(ListView):
-	model = Tag
-	template_name = 'blog/tags_list.html'
-	
-
-
-class PostCreate(LoginRequiredMixin,CreateView):
-	model = Post
-	
-	template_name = 'blog/post_create.html'
-	raise_exception = True
-	form_class = PostCreateForm
-	
-	def form_valid(self, form):
-		form.instance.author = self.request.user
-		return super(PostCreate, self).form_valid(form) 
-
-
-class TagUpdate(LoginRequiredMixin,UpdateView):
-	model = Tag
-	template_name = 'blog/tag_update.html'
-	fields =['title']
-	raise_exception = True
-
-class PostUpdate(LoginRequiredMixin,UpdateView):
-	model = Post
-	template_name = 'blog/post_update.html'
-	fields = ['title','body','tags']
-	raise_exception = True
-
-class PostDelete(LoginRequiredMixin,DeleteView):
-	model = Post
-	template_name = 'blog/post_delete.html'
-	success_url = reverse_lazy('post_list_url')
-	raise_exception = True
-
-class TagDelete(LoginRequiredMixin,DeleteView):
-	model = Tag
-	template_name = 'blog/tag_delete.html'
-	success_url = reverse_lazy('tags_list_url')
-	raise_exception = True
-
+def coment_create(request,slug):
+	post = Post.activ.get(slug__iexact=slug)
+	if request.user.is_authenticated :
+		if request.method == 'GET':
+		
+			return render(request,'blog/coment_create.html')
+		if request.method == 'POST':
+			coment = request.POST.get('content') 
+			Coment.objects.create(post_id=post,author_id=request.user,content=coment)
+			return redirect(reverse('post_detail_url', kwargs={'slug': slug}))
+	else:
+		return render(request, 'blog/iden.html')
 
 

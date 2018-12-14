@@ -8,9 +8,9 @@
 
 
 {% block content %}
-	<h1 class='mb-5'> Posts :</h1>
-	{% autopaginate posts.qs 2 as object_list %}
-	{% for post in object_list %}
+	<h1 class='mb-5'> <em>Posts</em>  </h1>
+	{% autopaginate posts 2 as posts %}
+	{% for post in posts %}
 	     {% include 'blog/includes/post_card_template.html'%}
 		
     {% endfor %}

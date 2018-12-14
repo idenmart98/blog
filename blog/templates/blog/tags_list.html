@@ -7,10 +7,12 @@
 {% block content %}
 	<h1 class="mb-5">Tags</h1>
 
-	{% for tag in object_list %}
+	{% for tag in tags %}
 
-		<h3><a href="{{tag.get_absolute_url}}">{{ tag.title }}</a></h3>
-	
+		
+		<div class="alert alert-primary" role="alert">
+  		<h4> <a class="alert-link" href="{{tag.get_absolute_url}}">{{ tag.title }}</a></h4>
+		</div>
 		
 	{% endfor %}
 

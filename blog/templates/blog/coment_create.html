@@ -1,0 +1,21 @@
+{% extends 'blog/base_blog.html' %}
+
+{% block title %}
+	Create Coment
+{% endblock %}
+
+{% block content %}
+	<form action="{{post.get_coment_url}}" method="post">
+		{% csrf_token %}
+		<div class="form-group">
+		
+			<label for="{{coment.content}}">Coment:</label>
+      		<input type="text" class="form-control" name="content" ><br>
+      		<button class="btn btn-primary" type="submit">Create</button>  
+    		<input type="hidden" name="next" value="{{ next|escape }}" />
+			
+		</div>
+			
+	</form>
+
+{% endblock %}

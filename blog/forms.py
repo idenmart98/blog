@@ -1,7 +1,7 @@
 from django import forms
 from blog.models import *
 
-class PostCreateForm(forms.ModelForm):
+class PostForm(forms.ModelForm):
 	class Meta:
 		model = Post
 		fields = ['title','body','tags']
@@ -17,7 +17,7 @@ class PostCreateForm(forms.ModelForm):
 	# 	super(PostCreateForm, self).__init__(*args, **kwargs)
 	# 	self.fields['posts'] = forms.ModelChoiceField(queryset=Post.objects.filter(author=user)
 
-class TagCreateForm(forms.ModelForm):
+class TagForm(forms.ModelForm):
 	class Meta:
 		model = Tag
 		fields = ['title']

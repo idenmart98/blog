@@ -16,29 +16,22 @@
 
 		<button>
 		<a href="{{post.get_addlike_url}}?like=like" class= "badge badge-primary" type="button" >Like</a>
-		<span class="badge badge-light">{{like}}</span>
+		<span class="badge badge-light">{{post.likes_count}}</span>
 		</button>
 		<button>
 		<a href="{{post.get_addlike_url}}?like=dislike" class= "badge badge-primary" type="button" >Dislike</a>
-		<span class="badge badge-light">{{dislike}}</span>
+		<span class="badge badge-light">{{post.dislikes_count}}</span>
 		</button>
 		<button>
-			<a href="{{post.get_coment_url}}" class= "badge badge-primary" type="button" >Comment</a>
+			<a href="{{post.get_comment_url}}" class= "badge badge-primary" type="button" >Comment</a>
 		</button>
 	</div>
 </div><br>
-
-	{% for coment in coments%}
-	  <div class="card mb-5" style="width: 18rem;">
-  		<div class="card-body">
-  			
-    		<h6 class="card-text">{{coment.content}}</h6><br>
-   			
-   	  		<p class="card-subtitle mb-2 ">{{coment.pub_date}}</p>
-   	  		<p class="card-subtitle mb-2 text-muted">{{coment.author_id}}</p>
-  		</div>
-  	  </div>
-  	{% endfor %}
+	{% for comment in post.comment_objects %}
+		{% if not comment.parent_id %}
+			{% include 'blog/comment.html' %}
+		{% endif%}
+	{% endfor %}
 
 
 {% endblock %}

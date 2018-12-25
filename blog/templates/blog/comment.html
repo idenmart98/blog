@@ -1,0 +1,28 @@
+
+
+<div class="comment">
+	<div class="card" style="width: 18rem;">
+		<div class="card-body">
+			<h6 class="card-text">{{comment.content}}</h6><br>
+			<p class="card-subtitle mb-2 ">{{comment.pub_date}}</p>
+			<p class="card-subtitle mb-2 text-muted">{{comment.author}}</p>
+			<button>
+			<a href="{{comment.get_absolute_url}}?like=like" class= "badge badge-primary" type="button" >Like</a>
+			<span class="badge badge-light">{{comment.count_likes}}</span>
+			</button>
+			<button>
+			<a href="{{comment.get_absolute_url}}?like=dislike" class= "badge badge-primary" type="button" >Dislike</a>
+			<span class="badge badge-light">{{comment.count_dislikes}}</span>
+			</button>
+			<button>
+			<a href="{{comment.get_create_comment_url}}" class= "badge badge-primary" type="button" >Answer</a>
+			</button>
+			{% if comment.childs %}
+				{% for comment in comment.childs.all %}
+					{% include 'blog/comment.html' %}
+				{% endfor %}
+			{% endif %}
+		</div>
+	</div>
+</div><br>
+	

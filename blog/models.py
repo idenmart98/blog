@@ -11,7 +11,7 @@ def gen_slug(s):
 
 class ActiveeManager(models.Manager):	
 	def get_queryset(self):
-		return super().get_queryset().filter(active = True)
+		return super().get_queryset().filter(active=True)
 
 
 # Create your models here.
@@ -25,8 +25,8 @@ class Post(models.Model):
 	author = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE ,db_index=True)
 	active = models.BooleanField(default=False)
 
-	objects = models.Manager()
-	activ = ActiveeManager()
+	all_objects = models.Manager()
+	objects = ActiveeManager()
 
 
 	
@@ -43,8 +43,8 @@ class Post(models.Model):
 		return reverse('add_like_url', kwargs={'slug':self.slug })
 	
 
-	def get_coment_url(self):
-		return reverse('coment_create_url', kwargs={'slug':self.slug })
+	def get_comment_url(self):
+		return reverse('comment_create_url', kwargs={'slug':self.slug })
 	
 	
 
@@ -86,11 +86,23 @@ class Tag(models.Model):
 	def __str__(self):
 		return '{}'.format(self.title)
 
-class Coment(models.Model):
-	author_id = models.ForeignKey(User,on_delete=models.CASCADE ,db_index=True)
-	post_id = models.ForeignKey(Post,on_delete=models.CASCADE ,db_index=True)
+class Comment(models.Model):
+	parent_id = models.ForeignKey('Comment',related_name='childs',on_delete=models.CASCADE,blank=True,null=True)
+	author = models.ForeignKey(User,on_delete=models.CASCADE ,db_index=True)
+	post = models.ForeignKey(Post,on_delete=models.CASCADE ,db_index=True, related_name='comments',blank=True,null=True)
 	content = models.TextField(blank=True, db_index=True)
 	pub_date = models.DateTimeField(auto_now_add=True)
+
+	def get_absolute_url(self):
+		return reverse('addlike_comment_url', kwargs={'slug':self.post.slug, 'comment_id': self.id})
+
+	def get_create_comment_url(self):
+		return reverse('comment_commentcreate_url', kwargs={'slug':self.post.slug ,'comment_id' :self.id})
+	def count_likes(self):
+		return Likes.objects.filter(comment=self.id,likes=True).count()
+
+	def count_dislikes(self):
+		return Likes.objects.filter(comment=self.id,likes=False).count()
 
 	class Meta:
 		ordering = ['-pub_date']
@@ -98,4 +110,5 @@ class Coment(models.Model):
 class Likes(models.Model):
 	likes = models.BooleanField()
 	liker = models.ForeignKey(User,on_delete=models.CASCADE )
-	post_id = models.ForeignKey(Post,on_delete=models.CASCADE )
+	post = models.ForeignKey(Post,on_delete=models.CASCADE ,blank=True,null=True, related_name='likes')
+	comment = models.ForeignKey(Comment,on_delete=models.CASCADE,blank=True,null=True, related_name='likes')

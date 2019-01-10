@@ -3,11 +3,15 @@ from django.views.generic import View,ListView,CreateView,UpdateView,DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Prefetch, Count, Subquery, IntegerField, OuterRef
+from django.http import HttpResponse
+from django.utils.timezone import datetime
 
 from blog.models import Post,Tag,Comment,Likes
 from blog.utils import ObjectDetailMixin
 from blog.filters import *
 from blog.forms import *
+
+from datetime import datetime, timedelta
 
 
 def add_likes(request, slug):
@@ -36,12 +40,9 @@ class SQCount(Subquery):
     template = "(SELECT count(*) FROM (%(subquery)s) _count)"
     output_field = IntegerField()
 
-# post = Post.objects.get(slug=slug)
+ 
 
-
-# likes = like.objects.filter(post=post) 
-
-def post_detail(request, slug,):
+def post_detail(request, slug):
 	likes = Likes.objects.filter(post=OuterRef('id')).values('id')
 
 	comment_likes = Likes.objects.filter(comment=OuterRef('id')).values('id')
@@ -49,8 +50,8 @@ def post_detail(request, slug,):
 								 dislikes_count=SQCount(comment_likes.filter(likes=False)))
 	post = Post.objects.prefetch_related(Prefetch('comments', queryset=comments, to_attr='comment_objects'), 'comments').\
 						annotate(likes_count=SQCount(likes.filter(likes=True)), 
-								 dislikes_count=SQCount(likes.filter(likes=False)))\
-						.get(slug=slug)
+								dislikes_count=SQCount(likes.filter(likes=False))).\
+						get(slug=slug)
 
 						
 	return render(request, 'blog/post_detail.html', {'post': post})
@@ -84,8 +85,9 @@ def post_create(request):
 		
 			bound_form.instance.author = request.user
 			new_post = bound_form.save()
-			return redirect(new_post)
-		return render(request, 'blog/post_list.html')
+			
+			posts = Post.objects.all()
+			return render(request, 'blog/index.html', {'posts':posts})
 
 
 
@@ -214,3 +216,13 @@ def addlike_comment(request,slug,comment_id):
 		
 	else:
 		return render(request, 'blog/iden.html' )
+
+
+def likes_count(request):
+	
+	l = Post.all_objects.all()
+	for i in l:
+		print(i.title)
+		print(i.date_pub)
+	# print (l)
+	# print(datetime.now)

@@ -17,8 +17,7 @@ urlpatterns = [
     path('post/<str:slug>/<int:comment_id>/addlike',
          addlike_comment, name='addlike_comment_url'),
     path('post/<str:slug>/<int:comment_id>/answer',
-         comment_commentcreate, name='comment_commentcreate_url')
-
+         comment_commentcreate, name='comment_commentcreate_url'),
 
 
 

@@ -10,7 +10,7 @@
 		{% csrf_token %}
 
 		<h3> Are you sure want to delete <b>"{{ tag.title|title}}"</b> tag?</h3>
-		<a href="{{tag.get_absolute_url}}">Cancel</a>
+		<button><a href="{{tag.get_absolute_url}}">Cancel</a></button>
 		<button type="sumbit" name="button" class="btn btn-danger">Delete</button>
 
 	</form>
